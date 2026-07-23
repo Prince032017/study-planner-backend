@@ -1,19 +1,28 @@
 package com.Jee.study_planner.controller;
 
 import com.Jee.study_planner.model.PlanResponse;
-import com.Jee.study_planner.model.StudentRequest;
-import com.Jee.study_planner.service.GroqService;
+import com.Jee.study_planner.model.RecoveryPlanRequest;
+import com.Jee.study_planner.model.StudyPlanRequest;
+import com.Jee.study_planner.service.RecoveryPlanService;
+import com.Jee.study_planner.service.StudyPlanService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
 public class StudyPlanController {
-    private final GroqService groqService;
+    private final StudyPlanService studyPlanService;
+    private final RecoveryPlanService recoveryPlanService;
 
     // Constructor injection — best practice over @Autowired
-    public StudyPlanController( GroqService groqService){
-        this.groqService = groqService;
+    public StudyPlanController(
+            StudyPlanService studyPlanService,
+            RecoveryPlanService recoveryPlanService
+    ){
+
+        this.studyPlanService = studyPlanService;
+        this.recoveryPlanService = recoveryPlanService;
     }
 
     // Health check — test this first
@@ -24,8 +33,8 @@ public class StudyPlanController {
 
     // Generate study plan
     @PostMapping("/study-plan")
-    public ResponseEntity<PlanResponse> generateStudyPlan(@RequestBody StudentRequest request){
-        PlanResponse response = groqService.generateStudyPlan(request);
+    public ResponseEntity<PlanResponse> generateStudyPlan(@Valid @RequestBody StudyPlanRequest request){
+        PlanResponse response = studyPlanService.generateStudyPlan(request);
         if(response.isSuccess()){
             return ResponseEntity.ok(response);
         }
@@ -33,8 +42,8 @@ public class StudyPlanController {
     }
 
     @PostMapping("/recovery-plan")
-    public ResponseEntity<PlanResponse> generateRecoveryPlan(@RequestBody StudentRequest request){
-        PlanResponse response = groqService.generateRecoveryPlan(request);
+    public ResponseEntity<PlanResponse> generateRecoveryPlan(@Valid @RequestBody RecoveryPlanRequest request){
+        PlanResponse response = recoveryPlanService.generateRecoveryPlan(request);
         if(response.isSuccess()){
             return ResponseEntity.ok(response);
         }
